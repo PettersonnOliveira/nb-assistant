@@ -16,17 +16,35 @@ Quando a informação necessária não está disponível no contexto recuperado,
 
 🌐 **Aplicação:** http://163.176.185.227:8080
 
-![Upload de documento](docs/demo-upload.png)
-![Chat com citação de fonte](docs/demo-chat.png)
-![Dashboard](docs/demo-dashboard.png)
+### 💬 Chat com RAG e fontes
 
-> Substitua os três arquivos acima pelos screenshots finais do projeto:
->
-> - `docs/demo-upload.png` → tela de upload funcionando
-> - `docs/demo-chat.png` → conversa com resposta e fonte
-> - `docs/demo-dashboard.png` → dashboard com dados reais
->
-> Caso prefira uma demonstração em vídeo, substitua os screenshots por um link para o vídeo.
+<p align="center">
+  <img src="docs/demo-chat.png" width="850">
+</p>
+
+<p align="center">
+  <em>Pergunta em linguagem natural, resposta fundamentada e fontes recuperadas pelo RAG.</em>
+</p>
+
+### 📄 Upload de documento
+
+<p align="center">
+  <img src="docs/demo-upload.png" width="700">
+</p>
+
+<p align="center">
+  <em>Upload de documento com classificação e status de processamento.</em>
+</p>
+
+### 📊 Dashboard
+
+<p align="center">
+  <img src="docs/demo-dashboard.png" width="700">
+</p>
+
+<p align="center">
+  <em>Monitoramento de documentos processados, chunks indexados e categorias.</em>
+</p>
 
 ## 🏗️ Arquitetura
 
@@ -403,9 +421,8 @@ Mantenha segredos e credenciais fora do Git.
 
 ### ⚠️ Pendências conhecidas
 
-- validação em produção dos parsers `XLSX`, `PPTX`, `HTML` e `JSON`;
+**Formatos implementados no código, mas ainda pendentes de validação em produção na OCI:**
 - confirmação/ajuste das métricas de embeddings e perguntas no dashboard;
-- atualização final dos screenshots da demonstração.
 
 ## 📌 Limitações atuais
 
