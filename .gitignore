@@ -35,3 +35,9 @@ build/
 .env
 *.key
 *.ppk
+
+# Pastas locais e segredos
+/storage-local/
+/src/storage-local/
+/src/main/resources/secrets/
+
