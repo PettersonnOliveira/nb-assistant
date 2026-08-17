@@ -16,17 +16,57 @@ Quando a informação necessária não está disponível no contexto recuperado,
 
 🌐 **Aplicação:** http://163.176.185.227:8080
 
-![Upload de documento](docs/demo-upload.png)
-![Chat com citação de fonte](docs/demo-chat.png)
-![Dashboard](docs/demo-dashboard.png)
+## Exemplos de Perguntas e Respostas
 
-> Substitua os três arquivos acima pelos screenshots finais do projeto:
->
-> - `docs/demo-upload.png` → tela de upload funcionando
-> - `docs/demo-chat.png` → conversa com resposta e fonte
-> - `docs/demo-dashboard.png` → dashboard com dados reais
->
-> Caso prefira uma demonstração em vídeo, substitua os screenshots por um link para o vídeo.
+O NB Assistant responde perguntas em linguagem natural com base nos documentos corporativos.
+
+**Exemplos de perguntas:**
+
+- Como funciona a contestação de uma transação Pix?
+- Qual é o público da modalidade Conta Kids?
+- Quais são os limites do Pix por faixa etária?
+- Quais são os procedimentos de segurança e prevenção à fraude?
+- Como funciona o bloqueio de uma conta?
+
+**Exemplos de respostas geradas:**
+
+> **Pergunta:** Como funciona a contestação de uma transação Pix?  
+> **Resposta:** O usuário pode iniciar a contestação pelo extrato da transação, selecionar...  
+> **Fonte:** Guia_de_Pix_e_Pagamentos.md - Seção: Contestação de Pix
+
+> **Pergunta:** Qual é o público da modalidade Conta Kids?  
+> **Resposta:** A modalidade Kids é destinada a crianças de 8 a 12 anos.  
+> **Fonte:** Documento corporativo indexado pelo NB Assistant.
+
+### 💬 Chat com RAG e fontes
+
+<p align="center">
+  <img src="docs/demo-chat.png" width="850">
+</p>
+
+<p align="center">
+  <em>Pergunta em linguagem natural, resposta fundamentada e fontes recuperadas pelo RAG.</em>
+</p>
+
+### 📄 Upload de documento
+
+<p align="center">
+  <img src="docs/demo-upload.png" width="700">
+</p>
+
+<p align="center">
+  <em>Upload de documento com classificação e status de processamento.</em>
+</p>
+
+### 📊 Dashboard
+
+<p align="center">
+  <img src="docs/demo-dashboard.png" width="700">
+</p>
+
+<p align="center">
+  <em>Monitoramento de documentos processados, chunks indexados e categorias.</em>
+</p>
 
 ## 🏗️ Arquitetura
 
@@ -403,9 +443,8 @@ Mantenha segredos e credenciais fora do Git.
 
 ### ⚠️ Pendências conhecidas
 
-- validação em produção dos parsers `XLSX`, `PPTX`, `HTML` e `JSON`;
+**Formatos implementados no código, mas ainda pendentes de validação em produção na OCI:**
 - confirmação/ajuste das métricas de embeddings e perguntas no dashboard;
-- atualização final dos screenshots da demonstração.
 
 ## 📌 Limitações atuais
 
