@@ -16,6 +16,28 @@ Quando a informação necessária não está disponível no contexto recuperado,
 
 🌐 **Aplicação:** http://163.176.185.227:8080
 
+## Exemplos de Perguntas e Respostas
+
+O NB Assistant responde perguntas em linguagem natural com base nos documentos corporativos.
+
+**Exemplos de perguntas:**
+
+- Como funciona a contestação de uma transação Pix?
+- Qual é o público da modalidade Conta Kids?
+- Quais são os limites do Pix por faixa etária?
+- Quais são os procedimentos de segurança e prevenção à fraude?
+- Como funciona o bloqueio de uma conta?
+
+**Exemplos de respostas geradas:**
+
+> **Pergunta:** Como funciona a contestação de uma transação Pix?  
+> **Resposta:** O usuário pode iniciar a contestação pelo extrato da transação, selecionar...  
+> **Fonte:** Guia_de_Pix_e_Pagamentos.md - Seção: Contestação de Pix
+
+> **Pergunta:** Qual é o público da modalidade Conta Kids?  
+> **Resposta:** A modalidade Kids é destinada a crianças de 8 a 12 anos.  
+> **Fonte:** Documento corporativo indexado pelo NB Assistant.
+
 ### 💬 Chat com RAG e fontes
 
 <p align="center">
