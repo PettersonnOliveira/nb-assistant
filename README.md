@@ -12,61 +12,47 @@ O **NB Assistant** permite que colaboradores façam perguntas em linguagem natur
 
 Quando a informação necessária não está disponível no contexto recuperado, o assistente informa que não encontrou evidências suficientes em vez de simplesmente inventar uma resposta.
 
-## 🚀 Demo — rodando na OCI
+## 🚀 Demonstração
 
-🌐 **Aplicação:** http://163.176.185.227:8080
+🌐 **Aplicação online:** [NB Assistant — OCI](http://163.176.185.227:8080)
 
-## Exemplos de Perguntas e Respostas
-
-O NB Assistant responde perguntas em linguagem natural com base nos documentos corporativos.
-
-**Exemplos de perguntas:**
-
-- Como funciona a contestação de uma transação Pix?
-- Qual é o público da modalidade Conta Kids?
-- Quais são os limites do Pix por faixa etária?
-- Quais são os procedimentos de segurança e prevenção à fraude?
-- Como funciona o bloqueio de uma conta?
-
-**Exemplos de respostas geradas:**
-
-> **Pergunta:** Como funciona a contestação de uma transação Pix?  
-> **Resposta:** O usuário pode iniciar a contestação pelo extrato da transação, selecionar...  
-> **Fonte:** Guia_de_Pix_e_Pagamentos.md - Seção: Contestação de Pix
-
-> **Pergunta:** Qual é o público da modalidade Conta Kids?  
-> **Resposta:** A modalidade Kids é destinada a crianças de 8 a 12 anos.  
-> **Fonte:** Documento corporativo indexado pelo NB Assistant.
-
-### 💬 Chat com RAG e fontes
+### � Dashboard
 
 <p align="center">
-  <img src="docs/demo-chat.png" width="850">
+  <img src="docs/demo-dashboard.png" width="850">
 </p>
 
 <p align="center">
-  <em>Pergunta em linguagem natural, resposta fundamentada e fontes recuperadas pelo RAG.</em>
+  <em>Visão geral dos documentos, processamento, chunks e perguntas realizadas.</em>
 </p>
 
-### 📄 Upload de documento
+### 👨‍👩‍👧 Seleção de assunto e consulta
 
 <p align="center">
-  <img src="docs/demo-upload.png" width="700">
-</p>
-
-<p align="center">
-  <em>Upload de documento com classificação e status de processamento.</em>
-</p>
-
-### 📊 Dashboard
-
-<p align="center">
-  <img src="docs/demo-dashboard.png" width="700">
+  <img src="docs/demo-kids-teen.png" width="850">
 </p>
 
 <p align="center">
-  <em>Monitoramento de documentos processados, chunks indexados e categorias.</em>
+  <em>Seleção de conhecimento e resposta baseada nos documentos da base.</em>
 </p>
+
+### � RAG com fontes
+
+<p align="center">
+  <img src="docs/demo-pix-pagamentos.png" width="850">
+</p>
+
+<p align="center">
+  <em>Consulta sobre Pix com resposta contextualizada e fontes recuperadas pelo RAG.</em>
+</p>
+
+## � Seleção por categoria
+
+O usuário pode selecionar o assunto antes de realizar uma consulta.
+
+A categoria selecionada é enviada junto com a pergunta e utilizada como filtro na recuperação semântica, restringindo o contexto aos documentos daquela área.
+
+Também existe a opção de consultar **Todos os assuntos**, permitindo uma busca global na base documental.
 
 ## 🏗️ Arquitetura
 
@@ -112,7 +98,7 @@ Resposta + fontes
 ## 🔄 Pipeline RAG
 
 ```text
-Upload
+Upload / Documentos pré-indexados
   ↓
 Storage
   ↓
@@ -125,6 +111,8 @@ Chunking
 Embeddings
   ↓
 PGVector
+  ↓
+Filtro por categoria
   ↓
 Busca semântica
   ↓
@@ -153,18 +141,11 @@ Fontes
 
 ## ✨ Funcionalidades
 
-### 📄 Upload e ingestão
+### � Ingestão e gerenciamento de documentos
 
-- Upload via `MultipartFile`
 - Classificação por categoria
 - Persistência dos metadados do documento
-- Status de processamento:
-  - `PENDING`
-  - `PROCESSING`
-  - `PROCESSED`
-  - `FAILED`
-- Registro do motivo da falha
-- Storage com OCI Object Storage e fallback/local
+- Carga inicial de documentos previamente organizados por categoria
 
 ### 🧩 Parsers
 
@@ -176,21 +157,18 @@ O pipeline utiliza `DocumentParser` + `ParserFactory`, permitindo adicionar novo
 - ✅ DOCX
 - ✅ CSV
 - ✅ Markdown
-
-**Parsers implementados no código e pendentes de validação no ambiente OCI:**
-
-- ⚠️ XLSX
-- ⚠️ PPTX
-- ⚠️ HTML
-- ⚠️ JSON
-
-> A implementação desses quatro parsers está presente no projeto, mas a versão publicada na OCI ainda não foi validada com eles.
+- ✅ JSON
+- ✅ HTML
+- ✅ PPTX
+- ✅ XLSX
 
 ### 💬 Chat corporativo
 
 - Interface de chat baseada em Thymeleaf
 - Perguntas em linguagem natural
 - RAG com busca semântica
+- Filtro por categoria selecionada
+- Opção de busca global em todos os assuntos
 - Respostas fundamentadas no contexto recuperado
 - Citação de fontes
 - Histórico temporário por sessão usando `chatId`
@@ -228,20 +206,18 @@ O dashboard disponibiliza informações sobre:
 - 🔐 Segurança
 - 🛡️ Prevenção à Fraude
 - 📱 Pix e Pagamentos
-- 📞 Atendimento
-- 🧑‍💻 Tecnologia e APIs
+- 🎧 Atendimento
+- 💻 Tecnologia e APIs
 - 📢 Marketing
 - ⚙️ Operações
 
 ## 🧠 Memória de conversa
 
-Cada carregamento da interface gera um `chatId` com `crypto.randomUUID()`.
-
-Esse identificador é enviado junto às perguntas e utilizado pelo Spring AI para manter o contexto temporário da conversa.
+Cada sessão da interface recebe um `chatId` exclusivo, utilizado pelo Spring AI para manter o contexto temporário da conversa.
 
 Com isso, perguntas de acompanhamento podem utilizar o histórico da mesma sessão.
 
-Ao recarregar a página, uma nova sessão é iniciada.
+Ao iniciar uma nova sessão, um novo `chatId` é criado.
 
 ## 🧱 Decisões de arquitetura
 
@@ -283,6 +259,10 @@ Os chunks e seus vetores são mantidos no `VectorStore` do Spring AI (`vector_st
 
 O `StorageService` desacopla o armazenamento do restante da aplicação, permitindo utilizar OCI Object Storage ou storage local.
 
+### Seleção de conhecimento por categoria
+
+A categoria selecionada pelo usuário é utilizada no processo de recuperação para restringir a busca aos documentos relacionados ao assunto escolhido.
+
 ## 🌐 API
 
 ### Upload
@@ -299,6 +279,12 @@ file
 category
 ```
 
+### Categorias disponíveis
+
+```http
+GET /api/documents/categories
+```
+
 ### Chat
 
 ```http
@@ -311,6 +297,7 @@ Exemplo:
 ```json
 {
   "question": "Qual é o objetivo da Conta Kids?",
+  "category": "CONTAS_KIDS_TEEN",
   "chatId": "uuid-da-sessao"
 }
 ```
@@ -385,9 +372,9 @@ http://localhost:8080
 
 ## ☁️ Deploy na OCI
 
-A aplicação está publicada em uma **OCI Compute Instance com Oracle Linux 9**.
+A aplicação foi implantada em uma **OCI Compute Instance com Oracle Linux 9** para demonstração.
 
-Ambiente de produção:
+Ambiente de produção/demonstração:
 
 ```text
 Oracle Cloud Infrastructure
@@ -401,12 +388,14 @@ Podman rootless
 
 Também foram tratados problemas específicos do ambiente OCI/Oracle Linux, incluindo:
 
-- versão incorreta do SDK OCI Object Storage;
+- versão do SDK OCI Object Storage;
 - regra de ingress da Security List;
 - porta 8080 no `firewalld`;
 - permissões de `storage-local` com SELinux em modo Enforcing;
 - uso do sufixo `:Z` nos volumes;
-- execução concorrente de `podman-compose`.
+- execução concorrente de `podman-compose`;
+- configuração de credenciais do Google GenAI;
+- inicialização do PGVector e do modelo de embeddings.
 
 ## 🔒 Configuração e segurança
 
@@ -427,24 +416,35 @@ Mantenha segredos e credenciais fora do Git.
 - Spring Boot + Java 21
 - PostgreSQL + pgvector
 - Gemini
-- Upload
+- Upload e ingestão
 - Storage
 - Parsing
 - Chunking
 - Embeddings
 - Busca semântica
+- Filtro por categoria
 - RAG
 - Fontes
 - Chat
 - Memória temporária de sessão
 - Dashboard
+- DocumentInitializer para carga inicial
 - OCI
 - Deploy público
 
 ### ⚠️ Pendências conhecidas
 
-**Formatos implementados no código, mas ainda pendentes de validação em produção na OCI:**
+**Parsers implementados no código, mas ainda pendentes de validação em produção na OCI:**
+
+- XLSX
+- PPTX
+- HTML
+- JSON
+
+Além disso:
+
 - confirmação/ajuste das métricas de embeddings e perguntas no dashboard;
+- evolução futura da administração dos documentos previamente indexados.
 
 ## 📌 Limitações atuais
 

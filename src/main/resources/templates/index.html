@@ -2,131 +2,289 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NB Assistant</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
     <style>
-        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; background: #0f1115; color: #e6e6e6; }
-        h1 { color: #4f9cff; }
-        .panel { background: #1a1d24; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        #chatBox { height: 400px; overflow-y: auto; padding: 10px; background: #0f1115; border-radius: 8px; margin-bottom: 12px; }
-        .msg-user { text-align: right; margin: 8px 0; }
-        .msg-user span { background: #4f9cff; color: #fff; padding: 8px 14px; border-radius: 14px; display: inline-block; }
-        .msg-bot { text-align: left; margin: 8px 0; }
-        .msg-bot span { background: #262a33; padding: 8px 14px; border-radius: 14px; display: inline-block; max-width: 90%; }
-        .sources { font-size: 12px; color: #888; margin-top: 4px; }
-        input, select, button { padding: 10px; border-radius: 8px; border: 1px solid #333; background: #0f1115; color: #eee; }
-        input[type=text] { width: 70%; }
-        button { background: #4f9cff; color: #fff; border: none; cursor: pointer; }
-        button:hover { opacity: 0.9; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0a0d12; color: #e6e6e6; min-height: 100vh; }
+
+        .container { max-width: 860px; margin: 0 auto; padding: 24px 20px; }
+
+        /* ─── Header ─── */
+        .header { text-align: center; padding: 40px 0 20px; }
+        .header h1 { font-size: 2rem; color: #4f9cff; margin-bottom: 6px; }
+        .header p { color: #8a8f9d; font-size: 1rem; }
+
+        /* ─── Category Selection Screen ─── */
+        .category-screen { display: block; }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+            margin-top: 24px;
+        }
+        .category-card {
+            background: #151921;
+            border: 1px solid #1e2430;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .category-card:hover {
+            background: #1a2030;
+            border-color: #4f9cff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(79, 156, 255, 0.1);
+        }
+        .category-card .emoji { font-size: 1.8rem; }
+        .category-card .info { flex: 1; }
+        .category-card .info h3 { font-size: 1rem; color: #e6e6e6; margin-bottom: 4px; }
+        .category-card .info span { font-size: 0.8rem; color: #6b7280; }
+        .category-card.todos {
+            border-color: #4f9cff33;
+            background: #111827;
+        }
+
+        /* ─── Chat Screen ─── */
+        .chat-screen { display: none; }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #151921;
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 16px;
+        }
+        .chat-header .subject {
+            font-size: 1.05rem;
+            color: #4f9cff;
+            font-weight: 600;
+        }
+        .btn-back {
+            background: none;
+            border: 1px solid #2d3344;
+            color: #8a8f9d;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-back:hover { border-color: #4f9cff; color: #4f9cff; }
+
+        .chat-panel {
+            background: #151921;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        #chatBox {
+            height: 420px;
+            overflow-y: auto;
+            padding: 10px 4px;
+            margin-bottom: 14px;
+        }
+        #chatBox::-webkit-scrollbar { width: 6px; }
+        #chatBox::-webkit-scrollbar-track { background: transparent; }
+        #chatBox::-webkit-scrollbar-thumb { background: #2d3344; border-radius: 3px; }
+
+        .msg-user { text-align: right; margin: 10px 0; }
+        .msg-user span {
+            background: #4f9cff;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 16px 16px 4px 16px;
+            display: inline-block;
+            max-width: 80%;
+            text-align: left;
+        }
+        .msg-bot { text-align: left; margin: 10px 0; }
+        .msg-bot span {
+            background: #1e2430;
+            padding: 10px 16px;
+            border-radius: 16px 16px 16px 4px;
+            display: inline-block;
+            max-width: 90%;
+            line-height: 1.5;
+        }
+        .msg-bot span p { margin-bottom: 8px; }
+        .msg-bot span p:last-child { margin-bottom: 0; }
+        .msg-bot span ul, .msg-bot span ol { padding-left: 20px; margin-bottom: 8px; }
+        .msg-bot span code { background: #0f1115; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        .msg-bot span pre { background: #0f1115; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; }
+        .msg-bot span pre code { padding: 0; background: none; }
+
+        .sources {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 6px;
+            padding-left: 4px;
+        }
+        .sources strong { color: #8a8f9d; }
+
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input-row input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #2d3344;
+            background: #0f1115;
+            color: #eee;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-input-row input:focus { border-color: #4f9cff; }
+        .chat-input-row button {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            background: #4f9cff;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .chat-input-row button:hover { opacity: 0.85; }
+        .chat-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .typing-indicator {
+            display: none;
+            text-align: left;
+            margin: 10px 0;
+        }
+        .typing-indicator span {
+            background: #1e2430;
+            padding: 10px 18px;
+            border-radius: 16px 16px 16px 4px;
+            display: inline-block;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* ─── Dashboard ─── */
+        .dashboard-section {
+            margin-top: 28px;
+        }
+        .dashboard-section h3 { color: #8a8f9d; font-size: 0.9rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 10px;
+        }
+        .dash-card {
+            background: #151921;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+        .dash-card .value { font-size: 1.6rem; font-weight: 700; color: #4f9cff; }
+        .dash-card .label { font-size: 0.78rem; color: #6b7280; margin-top: 2px; }
+
+        /* ─── Welcome message ─── */
+        .welcome-msg {
+            text-align: center;
+            color: #4a5060;
+            padding: 80px 20px;
+            font-size: 0.95rem;
+        }
+        .welcome-msg .icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+        /* ─── Footer ─── */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid #1e2430;
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+        .footer a {
+            color: #4f9cff;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
-<h1>🤖 NB Assistant</h1>
-<p>Conhecimento corporativo, respostas confiáveis.</p>
+<div class="container">
 
-<div class="panel">
-    <h3>📊 Dashboard</h3>
-    <div id="dashboardBox">Carregando...</div>
+    <!-- ═══ Header ═══ -->
+    <div class="header">
+        <h1>🤖 NB Assistant</h1>
+        <p>Conhecimento corporativo, respostas confiáveis.</p>
+    </div>
+
+    <!-- ═══ Category Selection Screen ═══ -->
+    <div id="categoryScreen" class="category-screen">
+        <h3 style="color:#8a8f9d; font-size:0.9rem; text-transform:uppercase; letter-spacing:1px;">Escolha um assunto</h3>
+        <div id="categoryGrid" class="category-grid">
+            <!-- Preenchido dinamicamente -->
+        </div>
+
+        <div class="dashboard-section">
+            <h3>📊 Painel</h3>
+            <div id="dashboardGrid" class="dashboard-grid">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ Chat Screen ═══ -->
+    <div id="chatScreen" class="chat-screen">
+        <div class="chat-header">
+            <span class="subject" id="chatSubject">📚 Todos os assuntos</span>
+            <button class="btn-back" onclick="goBack()">← Trocar assunto</button>
+        </div>
+
+        <div class="chat-panel">
+            <div id="chatBox">
+                <div class="welcome-msg">
+                    <div class="icon">💬</div>
+                    <p>Faça uma pergunta sobre os documentos corporativos.</p>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">
+                <span>Pensando...</span>
+            </div>
+            <form id="chatForm" class="chat-input-row" onsubmit="return false;">
+                <input type="text" id="questionInput" placeholder="Digite sua pergunta..." required autocomplete="off" />
+                <button type="submit" id="sendBtn">Enviar</button>
+            </form>
+        </div>
+    </div>
+
 </div>
 
-<div class="panel">
-    <h3>📄 Upload de Documento</h3>
-    <form id="uploadForm">
-        <input type="file" id="fileInput" name="file" required />
-        <select id="categoryInput" name="category">
-            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
-        </select>
-        <button type="submit">Enviar</button>
-    </form>
-    <p id="uploadStatus"></p>
-</div>
+<script>
+    /* ═══ State ═══ */
+    let currentCategory = null;   // null ou nome do enum (ex: "PIX_PAGAMENTOS")
+    let currentDisplayName = '';
+    let chatId = generateChatId();
 
-<div class="panel">
-    <h3>💬 Chat</h3>
-    <div id="chatBox"></div>
-    <form id="chatForm">
-        <input type="text" id="questionInput" placeholder="Como posso ajudar?" required />
-        <button type="submit">Enviar</button>
-    </form>
-</div>
-
-<script th:inline="javascript">
-    const chatBox = document.getElementById('chatBox');
-    window.chatId = crypto.randomUUID();
-
-    async function loadDashboard() {
-        const res = await fetch('/api/dashboard');
-        const d = await res.json();
-
-        const categories = Object.entries(d.documentsByCategory)
-            .map(([cat, count]) => `${cat}: ${count}`)
-            .join(' · ');
-
-        document.getElementById('dashboardBox').innerHTML = `
-            <p>📄 Documentos: ${d.totalDocuments} (✅ ${d.processedDocuments} processados,
-            ⏳ ${d.pendingDocuments} pendentes, ❌ ${d.failedDocuments} falharam)</p>
-            <p>🧩 Chunks indexados: ${d.totalChunks}</p>
-            <p>🔢 Embeddings armazenados: ${d.totalEmbeddings}</p>
-            <p>💬 Perguntas realizadas: ${d.totalQuestions}</p>
-            <p>🏷️ Por categoria: ${categories || '—'}</p>
-        `;
-    }
-
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const file = document.getElementById('fileInput').files[0];
-        const category = document.getElementById('categoryInput').value;
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('category', category);
-
-        document.getElementById('uploadStatus').textContent = 'Enviando...';
-
-        const res = await fetch('/api/documents/upload', { method: 'POST', body: formData });
-        const data = await res.json();
-
-        document.getElementById('uploadStatus').textContent =
-            res.ok ? `✅ "${data.originalFileName}" enviado (status: ${data.status})` : '❌ Erro no upload';
-
-        loadDashboard();
-    });
-
-    document.getElementById('chatForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = document.getElementById('questionInput');
-        const question = input.value.trim();
-        if (!question) return;
-
-        appendMessage('user', question);
-        input.value = '';
-
-        const res = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({question, chatId})
-        });
-        const data = await res.json();
-
-        appendMessage('bot', data.answer, data.sources);
-        loadDashboard();
-    });
-
-    function appendMessage(role, text, sources) {
-        const div = document.createElement('div');
-        div.className = role === 'user' ? 'msg-user' : 'msg-bot';
-
-        const content = role === 'bot' ? marked.parse(text) : escapeHtml(text);
-        let html = `<span>${content}</span>`;
-
-        if (sources && sources.length > 0) {
-            const list = sources.map(s => `${s.fileName} (${s.location})`).join(', ');
-            html += `<div class="sources">📚 Fontes: ${list}</div>`;
+    /* ═══ Utils ═══ */
+    function generateChatId() {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return window.crypto.randomUUID();
         }
-        div.innerHTML = html;
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+            const a = new Uint32Array(4);
+            window.crypto.getRandomValues(a);
+            return `${Date.now()}-${Array.from(a).join('-')}`;
+        }
+        return `${Date.now()}-${Math.random().toString(36).substring(2)}`;
     }
 
     function escapeHtml(text) {
@@ -135,8 +293,164 @@
         return div.innerHTML;
     }
 
+    /* ═══ Load Categories ═══ */
+    async function loadCategories() {
+        const grid = document.getElementById('categoryGrid');
+        grid.innerHTML = '';
+
+        // Card "Todos os assuntos" sempre no topo
+        const allCard = document.createElement('div');
+        allCard.className = 'category-card todos';
+        allCard.innerHTML = `
+            <div class="emoji">🔎</div>
+            <div class="info">
+                <h3>Todos os assuntos</h3>
+                <span>Buscar em toda a base de conhecimento</span>
+            </div>
+        `;
+        allCard.addEventListener('click', () => selectCategory(null, 'Todos os assuntos'));
+        grid.appendChild(allCard);
+
+        try {
+            const res = await fetch('/api/documents/categories');
+            const categories = await res.json();
+
+            categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `
+                    <div class="emoji">${cat.emoji}</div>
+                    <div class="info">
+                        <h3>${escapeHtml(cat.displayName)}</h3>
+                        <span>${cat.documentCount} documento${cat.documentCount !== 1 ? 's' : ''}</span>
+                    </div>
+                `;
+                card.addEventListener('click', () => selectCategory(cat.name, cat.emoji + ' ' + cat.displayName));
+                grid.appendChild(card);
+            });
+        } catch (e) {
+            console.error('Erro ao carregar categorias:', e);
+        }
+    }
+
+    /* ═══ Load Dashboard ═══ */
+    async function loadDashboard() {
+        try {
+            const res = await fetch('/api/dashboard');
+            const d = await res.json();
+
+            document.getElementById('dashboardGrid').innerHTML = `
+                <div class="dash-card"><div class="value">${d.totalDocuments}</div><div class="label">Documentos</div></div>
+                <div class="dash-card"><div class="value">${d.processedDocuments}</div><div class="label">Processados</div></div>
+                <div class="dash-card"><div class="value">${d.totalChunks}</div><div class="label">Chunks</div></div>
+                <div class="dash-card"><div class="value">${d.totalQuestions}</div><div class="label">Perguntas</div></div>
+            `;
+        } catch (e) {
+            console.error('Erro ao carregar dashboard:', e);
+        }
+    }
+
+    /* ═══ Navigation ═══ */
+    function selectCategory(categoryName, displayName) {
+        currentCategory = categoryName;
+        currentDisplayName = displayName;
+        chatId = generateChatId();
+
+        document.getElementById('chatSubject').textContent = '📚 ' + displayName;
+        document.getElementById('chatBox').innerHTML = `
+            <div class="welcome-msg">
+                <div class="icon">💬</div>
+                <p>Faça uma pergunta sobre <strong>${escapeHtml(displayName)}</strong>.</p>
+            </div>
+        `;
+
+        document.getElementById('categoryScreen').style.display = 'none';
+        document.getElementById('chatScreen').style.display = 'block';
+        document.getElementById('questionInput').focus();
+    }
+
+    function goBack() {
+        currentCategory = null;
+        currentDisplayName = '';
+
+        document.getElementById('chatScreen').style.display = 'none';
+        document.getElementById('categoryScreen').style.display = 'block';
+
+        loadDashboard();
+        loadCategories();
+    }
+
+    /* ═══ Chat ═══ */
+    function appendMessage(role, text, sources) {
+        // Remove welcome message if present
+        const welcome = document.querySelector('.welcome-msg');
+        if (welcome) welcome.remove();
+
+        const chatBox = document.getElementById('chatBox');
+        const div = document.createElement('div');
+        div.className = role === 'user' ? 'msg-user' : 'msg-bot';
+
+        const content = role === 'bot' ? marked.parse(text) : escapeHtml(text);
+        let html = `<span>${content}</span>`;
+
+        if (sources && sources.length > 0) {
+            const list = sources.map(s => `${escapeHtml(s.fileName)} (${escapeHtml(s.location)})`).join(', ');
+            html += `<div class="sources">📚 <strong>Fontes:</strong> ${list}</div>`;
+        }
+        div.innerHTML = html;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    document.getElementById('chatForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('questionInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const question = input.value.trim();
+        if (!question) return;
+
+        appendMessage('user', question);
+        input.value = '';
+        sendBtn.disabled = true;
+
+        const typing = document.getElementById('typingIndicator');
+        typing.style.display = 'block';
+
+        try {
+            const body = {
+                question,
+                chatId,
+                category: currentCategory || 'TODOS'
+            };
+
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+
+            typing.style.display = 'none';
+            appendMessage('bot', data.answer, data.sources);
+        } catch (err) {
+            typing.style.display = 'none';
+            appendMessage('bot', '❌ Erro ao processar sua pergunta. Tente novamente.');
+            console.error(err);
+        } finally {
+            sendBtn.disabled = false;
+            input.focus();
+        }
+    });
+
+    /* ═══ Init ═══ */
+    loadCategories();
     loadDashboard();
 </script>
+
+<!-- ═══ Footer ═══ -->
+<div class="footer">
+    <p>Desenvolvido por <a href="https://github.com/PettersonnOliveira" target="_blank">Petterson Oliveira</a></p>
+</div>
 
 </body>
 </html>

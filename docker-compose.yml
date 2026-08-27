@@ -20,6 +20,7 @@ services:
   app:
     build: .
     container_name: nb-assistant-app
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
@@ -29,6 +30,7 @@ services:
       SPRING_DATASOURCE_USERNAME: nb_admin
       SPRING_DATASOURCE_PASSWORD: nb_password
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70.0"
     ports:
       - "8080:8080"
     volumes:
