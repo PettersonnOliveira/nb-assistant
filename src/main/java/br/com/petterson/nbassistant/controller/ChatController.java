@@ -19,6 +19,6 @@ public class ChatController {
     @PostMapping
     public ChatResponse chat(@RequestBody ChatRequest request) {
         String chatId = request.chatId() != null ? request.chatId() : "default-session";
-        return ragService.ask(request.question(), chatId);
+        return ragService.ask(request.question(), chatId, request.category());
     }
 }

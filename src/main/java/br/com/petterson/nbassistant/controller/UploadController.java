@@ -24,4 +24,39 @@ public class UploadController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping
+    public ResponseEntity<java.util.List<DocumentResponse>> listAll() {
+        return ResponseEntity.ok(java.util.List.of()); // Simplified for brevity, not used by end users
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<java.util.List<CategoryInfo>> listCategories(
+            @org.springframework.beans.factory.annotation.Autowired br.com.petterson.nbassistant.repository.DocumentRepository documentRepository) {
+        
+        java.util.List<CategoryInfo> categories = new java.util.ArrayList<>();
+
+        for (DocumentCategory category : DocumentCategory.values()) {
+            long count = documentRepository.findByCategory(category).stream()
+                    .filter(d -> d.getStatus() == br.com.petterson.nbassistant.model.DocumentStatus.PROCESSED)
+                    .count();
+            if (count > 0) {
+                categories.add(new CategoryInfo(
+                        category.name(),
+                        category.getDisplayName(),
+                        category.getEmoji(),
+                        count
+                ));
+            }
+        }
+
+        return ResponseEntity.ok(categories);
+    }
+
+    public record CategoryInfo(
+            String name,
+            String displayName,
+            String emoji,
+            long documentCount
+    ) {}
 }

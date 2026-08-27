@@ -10,6 +10,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -43,15 +44,23 @@ public class RagService {
             {context}
             """;
 
-    public ChatResponse ask(String question, String chatId) {
+    public ChatResponse ask(String question, String chatId, String category) {
         chatMetricsService.recordQuestion();
 
-        var searchRequest = SearchRequest.builder()
+        var searchRequestBuilder = SearchRequest.builder()
                 .query(question)
                 .topK(TOP_K)
-                .similarityThreshold(SIMILARITY_THRESHOLD)
-                .build();
+                .similarityThreshold(SIMILARITY_THRESHOLD);
 
+        if (category != null && !category.isBlank() && !category.equalsIgnoreCase("TODOS")) {
+            var filterBuilder = new FilterExpressionBuilder();
+            searchRequestBuilder.filterExpression(filterBuilder.eq("category", category).build());
+            log.info("Buscando chunks filtrados pela categoria: '{}'", category);
+        } else {
+            log.info("Buscando chunks em todas as categorias");
+        }
+
+        SearchRequest searchRequest = searchRequestBuilder.build();
         List<org.springframework.ai.document.Document> results = vectorStore.similaritySearch(searchRequest);
 
         if (results.isEmpty()) {
@@ -67,7 +76,6 @@ public class RagService {
 
         ChatClient chatClient = chatClientBuilder.build();
 
-        // Chamada atualizada para o Spring AI 1.1.0 usando o .builder()
         String answer = chatClient.prompt()
                 .system(SYSTEM_PROMPT.replace("{context}", context))
                 .user(question)
