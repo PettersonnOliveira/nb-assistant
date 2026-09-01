@@ -13,4 +13,9 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     long countByStatus(DocumentStatus status);
 
     List<Document> findByCategory(DocumentCategory category);
+
+    long countByCategory(DocumentCategory category);
+
+    // 💡 Otimização: Conta direto no banco sem carregar objetos para a memória Java
+    long countByCategoryAndStatus(DocumentCategory category, DocumentStatus status);
 }

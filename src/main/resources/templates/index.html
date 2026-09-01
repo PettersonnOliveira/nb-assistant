@@ -312,7 +312,7 @@
         grid.appendChild(allCard);
 
         try {
-            const res = await fetch('/api/documents/categories');
+            const res = await fetch('/api/dashboard/categories');
             const categories = await res.json();
 
             categories.forEach(cat => {
@@ -325,7 +325,7 @@
                         <span>${cat.documentCount} documento${cat.documentCount !== 1 ? 's' : ''}</span>
                     </div>
                 `;
-                card.addEventListener('click', () => selectCategory(cat.name, cat.emoji + ' ' + cat.displayName));
+                card.addEventListener('click', () => selectCategory(cat.category, cat.emoji + ' ' + cat.displayName));
                 grid.appendChild(card);
             });
         } catch (e) {
