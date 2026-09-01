@@ -1,5 +1,9 @@
 # 🤖 NB Assistant
 
+<p align="center">
+  <img src="docs/badge-rag-agente-ia.png" alt="Badge RAG Agente IA" width="240">
+</p>
+
 **Conhecimento corporativo, respostas confiáveis.**
 
 Assistente de IA corporativo baseado em **RAG (Retrieval-Augmented Generation)**, desenvolvido para a **NB.CASH** — fintech fictícia de contas digitais para crianças, adolescentes e jovens adultos — como parte do desafio **Alura Agentes**.
@@ -16,7 +20,7 @@ Quando a informação necessária não está disponível no contexto recuperado,
 
 🌐 **Aplicação online:** [NB Assistant — OCI](http://163.176.185.227:8080)
 
-### � Dashboard
+### 📊 Dashboard
 
 <p align="center">
   <img src="docs/demo-dashboard.png" width="850">
@@ -36,7 +40,7 @@ Quando a informação necessária não está disponível no contexto recuperado,
   <em>Seleção de conhecimento e resposta baseada nos documentos da base.</em>
 </p>
 
-### � RAG com fontes
+### 📱 RAG com fontes
 
 <p align="center">
   <img src="docs/demo-pix-pagamentos.png" width="850">
@@ -46,7 +50,7 @@ Quando a informação necessária não está disponível no contexto recuperado,
   <em>Consulta sobre Pix com resposta contextualizada e fontes recuperadas pelo RAG.</em>
 </p>
 
-## � Seleção por categoria
+## 🔎 Seleção por categoria
 
 O usuário pode selecionar o assunto antes de realizar uma consulta.
 
@@ -141,7 +145,7 @@ Fontes
 
 ## ✨ Funcionalidades
 
-### � Ingestão e gerenciamento de documentos
+### 📚 Ingestão e gerenciamento de documentos
 
 - Classificação por categoria
 - Persistência dos metadados do documento
@@ -192,10 +196,10 @@ O dashboard disponibiliza informações sobre:
 - documentos processados;
 - documentos falhos;
 - documentos pendentes/em processamento;
-- total de chunks;
+- total de chunks / embeddings armazenados;
+- total de perguntas realizadas;
 - distribuição de documentos por categoria.
 
-> As métricas de embeddings armazenados e perguntas realizadas ainda precisam ser confirmadas na versão final do dashboard.
 
 ## 🗂️ Categorias de documentos
 
@@ -265,7 +269,7 @@ A categoria selecionada pelo usuário é utilizada no processo de recuperação 
 
 ## 🌐 API
 
-### Upload
+### 📄 Ingestão de documentos
 
 ```http
 POST /api/documents/upload
@@ -433,15 +437,6 @@ Mantenha segredos e credenciais fora do Git.
 - Deploy público
 
 ### ⚠️ Pendências conhecidas
-
-**Parsers implementados no código, mas ainda pendentes de validação em produção na OCI:**
-
-- XLSX
-- PPTX
-- HTML
-- JSON
-
-Além disso:
 
 - confirmação/ajuste das métricas de embeddings e perguntas no dashboard;
 - evolução futura da administração dos documentos previamente indexados.

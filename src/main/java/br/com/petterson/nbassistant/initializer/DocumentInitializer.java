@@ -29,6 +29,7 @@ public class DocumentInitializer {
     private final IngestionService ingestionService;
 
     private static final String STORAGE_DIR = "storage-local";
+    private static final long INGEST_INTERVAL_MS = 3000;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initializeDocuments() throws Exception {
@@ -97,6 +98,12 @@ public class DocumentInitializer {
                         // Processar documento
                         ingestionService.ingest(document, multipartFile);
                         processedCount++;
+                        Thread.sleep(INGEST_INTERVAL_MS);
+
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        log.warn("Inicialização interrompida durante o intervalo entre documentos.");
+                        return;
 
                     } catch (Exception e) {
                         log.error("Erro ao processar arquivo {}: {}. Documento marcado como FAILED.", fileName, e.getMessage());
